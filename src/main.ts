@@ -5,6 +5,9 @@ import { AppModule } from './app/app.module';
 import { warn } from 'console';
 import { GenesModule } from './genes/genes.module';
 import { TermsModule } from './terms/terms.module';
+import { CategoriesModule } from './categories/categories.module';
+import { FamiliesModule } from './families/families.module';
+import { PathwaysModule } from './pathways/pathways.module';
 
 /**
  * The url endpoint for open api ui
@@ -44,6 +47,9 @@ const bootstrap = async () => {
       AppModule,
       TermsModule,
       GenesModule,
+      FamiliesModule,
+      PathwaysModule,
+      CategoriesModule
     ]
   })
   SwaggerModule.setup(SWAGGER_API_ROOT, app, document);
@@ -51,7 +57,7 @@ const bootstrap = async () => {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
 
-  const PORT = 3001;
+  const PORT = 3005;
 
   await app.listen(PORT, '0.0.0.0');
 

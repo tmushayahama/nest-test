@@ -1,6 +1,6 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { SearchService } from './search.service';
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { ElasticsearchModule, ElasticsearchService } from '@nestjs/elasticsearch';
 import { ConfigModule } from './../config/config.module';
 import { ConfigService } from './../config/config.service';
 

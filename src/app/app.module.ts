@@ -12,6 +12,9 @@ import { roles } from './app.roles';
 import { SearchModule } from './../search/search.module';
 import { GenesModule } from './../genes/genes.module';
 import { TermsModule } from './../terms/terms.module';
+import { CategoriesModule } from './../categories/categories.module';
+import { FamiliesModule } from './../families/families.module';
+import { PathwaysModule } from './../pathways/pathways.module';
 
 @Module({
   imports: [
@@ -57,6 +60,9 @@ import { TermsModule } from './../terms/terms.module';
     CommandModule,
     ConfigModule,
     GenesModule,
+    FamiliesModule,
+    PathwaysModule,
+    CategoriesModule,
     TermsModule,
     SearchModule,
   ],

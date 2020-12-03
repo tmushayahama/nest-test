@@ -4,7 +4,7 @@ import { ConfigService } from './../config/config.service';
 
 
 @Injectable()
-export class GenesService {
+export class FamiliesService {
     private readonly esclient: elasticsearch.Client;
     constructor(
         private readonly configService: ConfigService
@@ -15,13 +15,13 @@ export class GenesService {
         });
     }
 
-    async getGenes(q: string): Promise<any> {
+    async getFamilies(q: string): Promise<any> {
         const body = {
             query: {
                 'multi_match': {
                     'fields': [
-                        'gene_name',
-                        'gene_symbol',
+                        'family_name',
+                        'family_symbol',
                         'species',
                         'panther_mf_meta.label'
                     ],
@@ -31,10 +31,9 @@ export class GenesService {
             }
         };
 
-
         return {
             results: await this.esclient.search({
-                index: this.configService.get('PTHR_GENES_INDEX'),
+                index: this.configService.get('PTHR_FAMILIES_INDEX'),
                 size: 20,
                 filterPath: 'took,hits.hits._score,**hits.hits._source**',
                 body,

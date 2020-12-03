@@ -1,9 +1,9 @@
-import { Controller, Get, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import {
     ApiOkResponse,
     ApiTags,
     ApiOperation,
-    ApiParam,
+    ApiQuery,
 } from '@nestjs/swagger';
 
 import { GenesService } from './genes.service';
@@ -15,13 +15,13 @@ export class GenesController {
         private readonly geneService: GenesService,
     ) { }
 
-    @Get(':id')
+    @Get()
+    @ApiQuery({ name: 'q', description: 'keyword' })
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({ summary: 'Get One gene', })
-    @ApiParam({ name: 'id', description: 'id of gene' })
+    @ApiOperation({ summary: 'Autocomplete genes', })
     @ApiOkResponse({})
-    async getOneGenes(@Param() params) {
-        return await this.geneService.getGenes(params.id);
+    async getOneGenes(@Query('q') q: string,) {
+        return await this.geneService.getGenes(q);
     }
 
 }

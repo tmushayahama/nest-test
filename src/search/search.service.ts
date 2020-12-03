@@ -3,17 +3,13 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ConfigService } from './../config/config.service';
 import * as elasticsearch from 'elasticsearch';
 
-interface MoviesJsonResponse {
-  title: string;
-  year: number;
-  cast: string[];
-  genres: string[];
-}
 
 @Injectable()
 export class SearchService {
   private readonly esclient: elasticsearch.Client;
-  constructor(private readonly esService: ElasticsearchService, private readonly configService: ConfigService) { }
+  constructor(
+    private readonly esService: ElasticsearchService,
+    private readonly configService: ConfigService) { }
 
   async bulkInsert(cards: any[]) {
     const bulk = [];
@@ -53,34 +49,6 @@ export class SearchService {
         return hit._source;
       }))
       .catch(err => { throw new HttpException(err, 500); });
-  }
-
-  async searchLocation(keyword: string) {
-
-    const body = {
-      size: 50,
-      from: 0,
-      query: {
-        "multi_match": {
-          "fields": ["city", "country", "subcountry"],
-          "query": keyword,
-          "fuzziness": 1
-        }
-      }
-    };
-
-    return await this.esclient.search({
-      index: 'places',
-      filterPath: 'took,hits.hits._score,**hits.hits._source**',
-      body,
-    })
-      .then(res => res.hits.hits.map((hit) => {
-        return hit._source;
-      }))
-      .catch(err => {
-        console.log(err);
-        throw new HttpException(err, 500);
-      });
   }
 
   phraseQuery(phrase) {
@@ -128,7 +96,7 @@ export class SearchService {
   async search(search: string) {
     let results = [];
     const { body } = await this.esService.search({
-      index: this.configService.get('ELASTICSEARCH_INDEX'),
+      index: this.configService.get('PTHR_GENES_INDEX'),
       body: {
         size: 12,
         query: {
