@@ -20,8 +20,8 @@ export class PathwaysController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Autocomplete pathways', })
     @ApiOkResponse({})
-    async getOnePathways(@Query('q') q: string,) {
-        return await this.pathwayService.getPathways(q);
+    async getOnePathways(@Query('q') q: string, @Query('count') count: boolean) {
+        return await this.pathwayService.getPathways(q, count);
     }
 
 }

@@ -6,6 +6,7 @@ import { ConfigService } from './../config/config.service';
 @Injectable()
 export class CategoriesService {
     private readonly esclient: elasticsearch.Client;
+    categoryIndex = this.configService.get('PTHR_CATEGORIES_INDEX')
     constructor(
         private readonly configService: ConfigService
     ) {
@@ -15,38 +16,42 @@ export class CategoriesService {
         });
     }
 
-    async getCategories(q: string): Promise<any> {
+    async getCategories(q: string, count?: boolean): Promise<any> {
         const body = {
             query: {
-                'multi_match': {
-                    'fields': [
-                        'category_name',
-                        'category_symbol',
-                        'species',
-                        'panther_mf_meta.label'
-                    ],
-                    'query': q,
-                    'fuzziness': 1
+                "term": {
+                    "category_acc.keyword": q
                 }
             }
         };
 
-
-        return {
-            results: await this.esclient.search({
-                index: this.configService.get('PTHR_CATEGORIES_INDEX'),
-                size: 20,
-                filterPath: 'took,hits.hits._score,**hits.hits._source**',
-                body,
-            })
-                .then(res => res.hits.hits.map((hit) => {
-                    return hit._source;
-                }))
-                .catch(err => {
+        if (count) {
+            return {
+                count: await this.esclient.count({
+                    index: this.categoryIndex,
+                    body,
+                }).then(res => (res.count)
+                ).catch(err => {
                     console.log(err);
                     throw new HttpException(err, 500);
                 })
+            }
+        } else {
+            return {
+                results: await this.esclient.search({
+                    index: this.categoryIndex,
+                    size: 20,
+                    filterPath: 'took,hits.hits._score,**hits.hits._source**',
+                    body,
+                })
+                    .then(res => res.hits.hits.map((hit) => {
+                        return hit._source;
+                    }))
+                    .catch(err => {
+                        console.log(err);
+                        throw new HttpException(err, 500);
+                    })
+            }
         }
     }
-
 }

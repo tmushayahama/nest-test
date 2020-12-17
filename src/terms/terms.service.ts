@@ -17,11 +17,19 @@ export class TermsService {
 
     async getTerms(q: string): Promise<any> {
         const body = {
-            query: {
-                'multi_match': {
-                    'fields': ['id', 'label'],
-                    'query': q,
-                    'fuzziness': 1
+            "size": 20,
+            "_source": [
+                "label",
+                "id"
+            ],
+            "query": {
+                "match": {
+                    "label": {
+                        "query": q,
+                        "operator": "and",
+                        "fuzziness": 2,
+                        "max_expansions": 10
+                    }
                 }
             }
         };

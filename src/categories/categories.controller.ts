@@ -20,8 +20,8 @@ export class CategoriesController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Autocomplete categories', })
     @ApiOkResponse({})
-    async getOneCategories(@Query('q') q: string,) {
-        return await this.categoryService.getCategories(q);
+    async getOneCategories(@Query('q') q: string, @Query('count') count: boolean) {
+        return await this.categoryService.getCategories(q, count);
     }
 
 }

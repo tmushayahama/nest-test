@@ -20,8 +20,7 @@ export class GenesController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Autocomplete genes', })
     @ApiOkResponse({})
-    async getOneGenes(@Query('q') q: string,) {
-        return await this.geneService.getGenes(q);
+    async getOneGenes(@Query('q') q: string, @Query('count') count: boolean) {
+        return await this.geneService.getGenes(q, count);
     }
-
 }

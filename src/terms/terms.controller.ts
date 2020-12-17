@@ -26,4 +26,5 @@ export class TermsController {
         return await this.termService.getTerms(q);
     }
 
+
 }

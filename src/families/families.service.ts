@@ -6,6 +6,7 @@ import { ConfigService } from './../config/config.service';
 @Injectable()
 export class FamiliesService {
     private readonly esclient: elasticsearch.Client;
+    familyIndex = this.configService.get('PTHR_FAMILIES_INDEX')
     constructor(
         private readonly configService: ConfigService
     ) {
@@ -15,7 +16,7 @@ export class FamiliesService {
         });
     }
 
-    async getFamilies(q: string): Promise<any> {
+    async getFamilies(q: string, count?: boolean): Promise<any> {
         const body = {
             query: {
                 'multi_match': {
@@ -23,29 +24,41 @@ export class FamiliesService {
                         'family_name',
                         'family_symbol',
                         'species',
-                        'panther_mf_meta.label'
+                        'panther_mf_meta.id'
                     ],
                     'query': q,
-                    'fuzziness': 1
                 }
             }
         };
 
-        return {
-            results: await this.esclient.search({
-                index: this.configService.get('PTHR_FAMILIES_INDEX'),
-                size: 20,
-                filterPath: 'took,hits.hits._score,**hits.hits._source**',
-                body,
-            })
-                .then(res => res.hits.hits.map((hit) => {
-                    return hit._source;
-                }))
-                .catch(err => {
+        if (count) {
+            return {
+                count: await this.esclient.count({
+                    index: this.familyIndex,
+                    body,
+                }).then(res => (res.count)
+                ).catch(err => {
                     console.log(err);
                     throw new HttpException(err, 500);
                 })
+            }
+        } else {
+            return {
+                results: await this.esclient.search({
+                    index: this.familyIndex,
+                    size: 20,
+                    filterPath: 'took,hits.hits._score,**hits.hits._source**',
+                    body,
+                })
+                    .then(res => res.hits.hits.map((hit) => {
+                        return hit._source;
+                    }))
+                    .catch(err => {
+                        console.log(err);
+                        throw new HttpException(err, 500);
+                    })
+            }
         }
-    }
 
+    }
 }

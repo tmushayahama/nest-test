@@ -20,8 +20,8 @@ export class FamiliesController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Autocomplete families', })
     @ApiOkResponse({})
-    async getOneFamilies(@Query('q') q: string,) {
-        return await this.familyService.getFamilies(q);
+    async getOneFamilies(@Query('q') q: string, @Query('count') count: boolean) {
+        return await this.familyService.getFamilies(q, count);
     }
 
 }
